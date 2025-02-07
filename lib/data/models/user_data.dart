@@ -9,6 +9,7 @@ class UserData {
   String uid;
   List<dynamic> followers;
   List<dynamic> following;
+  int unreadMessages; // Change to int
 
   UserData({
     required this.userName,
@@ -19,6 +20,7 @@ class UserData {
     required this.uid,
     required this.followers,
     required this.following,
+    this.unreadMessages = 0, // Default to 0
   });
 
   // Convert data to map to use in Firebase
@@ -32,6 +34,7 @@ class UserData {
       "uid": uid,
       "followers": followers,
       "following": following,
+      "unreadMessages": unreadMessages,
     };
   }
 
@@ -39,12 +42,10 @@ class UserData {
   static UserData? convertdata2Model(DocumentSnapshot snap) {
     var data = snap.data() as Map<String, dynamic>?;
 
-    // Ensure data is not null before using it
     if (data == null) {
-      return null; // or handle as appropriate
+      return null;
     }
 
-    // Fallback values in case any field is missing
     return UserData(
       userName: data["userName"] ?? '',
       phoneNumber: data["phoneNumber"] ?? '',
@@ -54,6 +55,7 @@ class UserData {
       uid: data["uid"] ?? '',
       followers: data["followers"] ?? [],
       following: data["following"] ?? [],
+      unreadMessages: data["unreadMessages"] ?? 0,
     );
   }
 }

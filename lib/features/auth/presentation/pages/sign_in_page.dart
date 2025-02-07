@@ -37,9 +37,10 @@ class _SignInPageState extends State<SignInPage> {
             children: [
               Positioned.fill(
                 child: Container(
-                  color: const Color(0xFF4A90E2),
+                  color: Colors.black,
                 ),
               ),
+              
               Positioned(
                 bottom: 0,
                 child: Container(
@@ -59,6 +60,18 @@ class _SignInPageState extends State<SignInPage> {
                 left: 20,
                 child: Text(
                   "Sign In",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
+                  ),
+                ),
+              ),
+                  Positioned(
+                top: screenHeight * 0.1,
+                left: 55,
+                child: Text(
+                  "Welcome Back!",
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -133,6 +146,20 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
               ),
+
+                    Positioned(
+            // top: screenHeight*.05,
+            bottom: 0,
+            right: screenWidth * .24,
+
+            child: SizedBox(
+              height: 100,
+              width: 200,
+              child: Image.asset(
+                "assets/images/applogo.png",
+              ),
+            ),
+          ),
             ],
           ),
         ),

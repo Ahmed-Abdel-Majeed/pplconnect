@@ -98,81 +98,147 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: Container(
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          // color: Colors.deepOrange,
-          image: DecorationImage(
-            image: AssetImage("assets/images/signup.png"),
-            fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Container(
+              color: Colors.black,
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 50),
-                    ProfileImagePicker(
-                      image: imgPath,
-                      onPickImage: _showImageSourceOptions,
-                    ),
-                    const SizedBox(height: 30),
-                    AuthTextField(
-                      controller: usernameController,
-                      label: "User Name",
-                      validator: _validateUsername,
-                      icon: Icons.person,
-                    ),
-                    const SizedBox(height: 20),
-                    AuthTextField(
-                      controller: emailController,
-                      label: "Email Address",
-                      keyboardType: TextInputType.emailAddress,
-                      validator: _validateEmail,
-                      icon: Icons.email,
-                    ),
-                    const SizedBox(height: 20),
-                    AuthTextField(
-                      controller: phoneController,
-                      label: "Phone Number",
-                      keyboardType: TextInputType.phone,
-                      validator: _validatePhone,
-                      icon: Icons.phone,
-                    ),
-                    const SizedBox(height: 20),
-                    PasswordField(
-                      passwordController: passwordController,
-                      onChanged: _passwordChanged,
-                    ),
-                    const SizedBox(height: 20),
-                    _buildPasswordRequirements(),
-                    const SizedBox(height: 30),
-                    ContinueButton(
-                      isLoading: isLoading,
-                      onPressed: () {
-                        _handleRegistration();
-                      },
-                      buttonText: "Register",
-                    ),
-                    const SizedBox(height: 20),
-                    AuthFooter(
-                      questionText: "Already have an account?  ",
-                      actionText: "Sign In",
-                      onActionPressed: () =>
-                          AppNavigator.pushReplacement(context, SignInPage()),
-                    ),
-                  ],
+          Positioned(
+              top: screenHeight * .09,
+              left: 11,
+              child: Text(
+                "Creat An Account",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold),
+              )),
+
+          Positioned(
+            top: screenHeight * .25,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(40),
+                  topLeft: Radius.circular(40),
                 ),
+              ),
+              height: screenHeight,
+              width: screenWidth,
+            ),
+          ),
+          Positioned(
+            // top: screenHeight*.05,
+            bottom: 0,
+            right: screenWidth * .24,
+
+            child: SizedBox(
+              height: 100,
+              width: 200,
+              child: Image.asset(
+                "assets/images/applogo.png",
               ),
             ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16, left: 16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: screenHeight * .1),
+                  ProfileImagePicker(
+                    image: imgPath,
+                    onPickImage: _showImageSourceOptions,
+                  ),
+                  const SizedBox(height: 30),
+                  AuthTextField(
+                    controller: usernameController,
+                    label: "User Name",
+                    validator: _validateUsername,
+                    icon: Icons.person,
+                  ),
+                  const SizedBox(height: 20),
+                  AuthTextField(
+                    controller: emailController,
+                    label: "Email Address",
+                    keyboardType: TextInputType.emailAddress,
+                    validator: _validateEmail,
+                    icon: Icons.email,
+                  ),
+                  const SizedBox(height: 20),
+                  AuthTextField(
+                    controller: phoneController,
+                    label: "Phone Number",
+                    keyboardType: TextInputType.phone,
+                    validator: _validatePhone,
+                    icon: Icons.phone,
+                  ),
+                  const SizedBox(height: 20),
+                  PasswordField(
+                    passwordController: passwordController,
+                    onChanged: _passwordChanged,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildPasswordRequirements(),
+                  const SizedBox(height: 30),
+                  ContinueButton(
+                    isLoading: isLoading,
+                    onPressed: () {
+                      _handleRegistration();
+                    },
+                    buttonText: "Register",
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Text(
+                        "have an account?",
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Color.fromARGB(255, 152, 152, 152),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          AppNavigator.pushReplacement(context, SignInPage());
+                        },
+                        child: Text(
+                          "  LogIn",
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: Color(0xFF4A90E2),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 70,
+                  )
+                ],
+              ),
+            ),
+          ),
+          // Positioned(
+          // top: screenHeight*.166,
+          // right: 36,
+
+          // child:  Container(
+          //   height: 26,
+          //   width: 125,
+          //   color: Colors.white,
+          // )),
+        ],
       ),
     );
   }

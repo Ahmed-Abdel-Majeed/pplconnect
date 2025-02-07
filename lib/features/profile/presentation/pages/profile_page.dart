@@ -196,19 +196,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Expanded(child: ProfileImageGrid(userId: widget.userId)),
                     const Align(
                       alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '© 2024 Ahmed Abdalmaged. All rights reserved.',
-                              style: TextStyle(fontSize: 14, color: Colors.grey),
-                            ),
-                            SizedBox(height: 4),
-                          ],
-                        ),
-                      ),
+                
                     ),
                   ],
                 ),
