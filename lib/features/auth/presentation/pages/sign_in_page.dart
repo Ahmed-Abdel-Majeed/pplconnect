@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pplconnect/core/navigation/app_navigator.dart';
 
+import '../../../../core/services/firebase_service.dart';
 import '../widgets/auth_footer.dart';
 import '../widgets/continue_button.dart';
 import '../widgets/email_field.dart';
@@ -36,7 +37,7 @@ class _SignInPageState extends State<SignInPage> {
             children: [
               Positioned.fill(
                 child: Container(
-                  color: const Color(0xFF4A90E2), 
+                  color: const Color(0xFF4A90E2),
                 ),
               ),
               Positioned(
@@ -92,7 +93,31 @@ class _SignInPageState extends State<SignInPage> {
                   width: screenWidth * 0.9,
                   child: ContinueButton(
                     isLoading: isLoading,
-                    onPressed: () {},
+                    onPressed: () async {
+                      if (isLoading) return;
+
+                      setState(() {
+                        isLoading = true;
+                      });
+
+                      try {
+                        await AuthService().signIn(
+                          emailAddress: emailController.text,
+                          password: passwordController.text,
+                          context: context,
+                        );
+                        setState(() {
+                          
+                        });
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Error: $e")),
+                        );
+                      }
+                      setState(() {
+                        isLoading = false;
+                      });
+                    },
                   ),
                 ),
               ),
@@ -101,9 +126,11 @@ class _SignInPageState extends State<SignInPage> {
                 left: 20,
                 child: SizedBox(
                   width: screenWidth * 0.9,
-                  child: AuthFooter(onActionPressed: () { 
-                    AppNavigator.push(context, RegisterPage());
-                   },),
+                  child: AuthFooter(
+                    onActionPressed: () {
+                      AppNavigator.push(context, RegisterPage());
+                    },
+                  ),
                 ),
               ),
             ],

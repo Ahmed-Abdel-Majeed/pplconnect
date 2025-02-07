@@ -1,20 +1,36 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pplconnect/features/profile/presentation/pages/profile_page.dart';
 
-class PostWidget extends StatelessWidget {
+import '../../../../core/navigation/app_navigator.dart';
+import '../../../../core/services/storage.dart';
+import '../../../comment/presentation/pages/comments_page.dart';
+
+class PostWidget extends StatefulWidget {
   final Map<String, dynamic> postData;
+  final String postId;
   final int commentCount;
+  final Function(String, int) updateCommentCount;
 
   const PostWidget({
     super.key,
     required this.postData,
+    required this.postId,
     required this.commentCount,
+    required this.updateCommentCount,
   });
 
   @override
+  State<PostWidget> createState() => _PostWidgetState();
+}
+
+class _PostWidgetState extends State<PostWidget> {
+  @override
   Widget build(BuildContext context) {
     final widthScreen = MediaQuery.of(context).size.width;
-    final formattedDate = _formatDate(postData['postDate']);
+    final formattedDate = _formatDate(widget.postData['postData']);
 
     return Card(
       elevation: 5,
@@ -26,43 +42,50 @@ class PostWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildPostHeader(),
-          _buildPostImage(),
-          _buildInteractionButtons(),
+          _buildPostHeader(context),
+          _buildPostImage(widthScreen),
+          _buildInteractionRow(context),
           _buildPostDescription(formattedDate),
         ],
       ),
     );
   }
 
-  Widget _buildPostHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundImage: NetworkImage(postData["profImg"].toString()),
-              ),
-              const SizedBox(width: 10),
-              Text(postData["userName"]??"",
+  Widget _buildPostHeader(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _navigateToProfile(context),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 18,
+                  backgroundImage: NetworkImage(widget.postData["profImg"]),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  widget.postData["userName"],
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.white)),
-            ],
-          ),
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
-            onPressed: () {},
-          ),
-        ],
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            IconButton(
+              icon: const Icon(Icons.more_vert, color: Colors.white),
+              onPressed: () {},
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildPostImage() {
+  Widget _buildPostImage(double widthScreen) {
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
@@ -74,16 +97,18 @@ class PostWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: Image.asset(
-        "assets/images/signup.png",
+      child: Image.network(
+        widget.postData["imgPost"],
         height: 300,
-        width: double.infinity,
+        width: widthScreen * 0.999999,
         fit: BoxFit.cover,
       ),
     );
   }
 
-  Widget _buildInteractionButtons() {
+  Widget _buildInteractionRow(BuildContext context) {
+    final isLiked = _checkIfLiked();
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -92,10 +117,13 @@ class PostWidget extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.favorite_border, color: Colors.pinkAccent),
-                onPressed: () {},
+                icon: Icon(
+                  isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: Colors.pinkAccent,
+                ),
+                onPressed: () => _toggleLike(),
               ),
-              _buildCommentButton(),
+              _buildCommentButton(context),
               IconButton(
                 icon: const Icon(Icons.send, color: Colors.cyanAccent),
                 onPressed: () {},
@@ -111,31 +139,42 @@ class PostWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCommentButton() {
-    return Stack(
-      children: [
-        IconButton(
-          icon: const Icon(Icons.comment, color: Colors.lightBlue),
-          onPressed: () {},
-        ),
-        Positioned(
-          right: 0,
-          child: Container(
-            width: 20,
-            height: 22,
-            decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 7, 136, 211),
-              shape: BoxShape.circle,
+  Widget _buildCommentButton(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection("PostData")
+          .doc(widget.postId)
+          .collection("Comments")
+          .snapshots(),
+      builder: (context, snapshot) {
+        int count = 0;
+        if (snapshot.hasData) {
+          count = snapshot.data!.docs.length;
+        }
+        return Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.comment, color: Colors.lightBlue),
+              onPressed: () => _navigateToComments(context),
             ),
-            child: Center(
-              child: Text(
-                "$commentCount",
-                style: const TextStyle(color: Colors.white, fontSize: 12),
+            Positioned(
+              right: 4,
+              top: 4,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 7, 136, 211),
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  "$count",
+                  style: const TextStyle(color: Colors.white, fontSize: 10),
+                ),
               ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
@@ -147,11 +186,13 @@ class PostWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "${postData['likedBy']?.length ?? 0} ${postData['likedBy'] != null && postData['likedBy'].length > 1 ? "Likes" : "Like"}",
+            "${widget.postData['likedBy']?.length ?? 0} ${widget.postData['likedBy'] != null && widget.postData['likedBy'].length > 1 ? "Likes" : "Like"}",
             style: const TextStyle(color: Colors.grey),
           ),
-          Text("ssssss",
-              style: const TextStyle(color: Colors.grey)),
+          Text(
+            widget.postData["description"],
+            style: const TextStyle(color: Colors.grey),
+          ),
           const SizedBox(height: 5),
           Text(
             formattedDate,
@@ -165,14 +206,28 @@ class PostWidget extends StatelessWidget {
     );
   }
 
-  String _formatDate(dynamic date) {
-    if (date is DateTime) {
-      return DateFormat('dd-MM-yyyy hh:mm a').format(date);
-    }
-    return 'Unknown date';
+  bool _checkIfLiked() {
+    return widget.postData['likedBy'] != null &&
+        widget.postData['likedBy'].contains(FirebaseAuth.instance.currentUser!.uid);
+  }
+
+  String _formatDate(dynamic timestamp) {
+    if (timestamp is! Timestamp) return 'Unknown date';
+    return DateFormat('dd-MM-yyyy hh:mm a').format(timestamp.toDate());
+  }
+
+  void _toggleLike() {
+    StorageData().togglePostLike(
+      postId: widget.postData["postId"],
+      postData: widget.postData,
+    );
+  }
+
+  void _navigateToProfile(BuildContext context) {
+    AppNavigator.push(context, ProfilePage(userId: widget.postData["Uid"]));
+  }
+
+  void _navigateToComments(BuildContext context) {
+    AppNavigator.push(context, CommentsPage(postDataInHomeScreen: widget.postData));
   }
 }
-
-
-
-

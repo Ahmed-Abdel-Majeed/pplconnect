@@ -1,13 +1,13 @@
 import 'dart:math';
-import 'dart:typed_data';
-
+import 'dart:typed_data' show Uint8List;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pplconnect/features/auth/presentation/pages/sign_in_page.dart';
 import 'package:path/path.dart' show basename;
-
 import '../../../../core/navigation/app_navigator.dart';
+import '../../../../core/services/firebase_service.dart';
 import '../../../../core/utils/snackbar.dart';
+import '../../../home/presentation/main_screen.dart';
 import '../widgets/auth_footer.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/continue_button.dart';
@@ -45,7 +45,32 @@ class _RegisterPageState extends State<RegisterPage> {
     phoneController.dispose();
     super.dispose();
   }
+
 // add reg
+  Future<void> _handleRegistration() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (imgPath == null) {
+      showSnackBar(context, "Please select a profile image");
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      await AuthService().register(
+        emailAddress: emailController.text,
+        password: passwordController.text,
+        context: context,
+        userName: usernameController.text,
+        phoneNumber: phoneController.text,
+        imgPath: imgPath,
+        imgName: imgName,
+      );
+      AppNavigator.pushReplacement(context, const MainScreen());
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
 
   void _passwordChanged(String password) {
     setState(() {
@@ -130,17 +155,17 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 30),
                     ContinueButton(
                       isLoading: isLoading,
-                      onPressed: (){},
+                      onPressed: () {
+                        _handleRegistration();
+                      },
                       buttonText: "Register",
                     ),
                     const SizedBox(height: 20),
                     AuthFooter(
                       questionText: "Already have an account?  ",
                       actionText: "Sign In",
-                      onActionPressed: () => AppNavigator.pushReplacement(
-                        context, 
-                         SignInPage()
-                      ),
+                      onActionPressed: () =>
+                          AppNavigator.pushReplacement(context, SignInPage()),
                     ),
                   ],
                 ),
@@ -155,10 +180,11 @@ class _RegisterPageState extends State<RegisterPage> {
   String? _validateUsername(String? value) =>
       value?.isEmpty ?? true ? 'Please enter your name' : null;
 
-  String? _validateEmail(String? email) =>
-      email?.contains(RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")) ?? false
-          ? null
-          : "Enter a valid email";
+  String? _validateEmail(String? email) => email?.contains(RegExp(
+              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")) ??
+          false
+      ? null
+      : "Enter a valid email";
 
   String? _validatePhone(String? value) =>
       value?.length == 11 && RegExp(r'^[0-9]+$').hasMatch(value ?? "")
@@ -216,6 +242,4 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
-
-
 }
