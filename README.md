@@ -51,6 +51,8 @@ PPLConnect is a modern Flutter-based application designed to enhance social conn
    git clone https://github.com/Ahmed-Abdel-Majeed/pplconnect.git
    cd pplconnect
 
-![Screenshot_1738954448](https://github.com/user-attachments/assets/dd3b5253-9127-44cd-88f0-9a3a88349862) 
+![Untitled design](https://github.com/user-attachments/assets/a5ce22c7-7ac2-4f58-8dd1-db70d021e352)
+![AddPost](https://github.com/user-attachments/assets/93598c86-4e87-40a4-b89f-adab53e97c1c)
+
 
 
