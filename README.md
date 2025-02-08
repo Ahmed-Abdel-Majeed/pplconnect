@@ -4,7 +4,7 @@ PPLConnect is a modern Flutter-based application designed to enhance social conn
 
 ## 🚀 Features
 
-- 🔐 Secure authentication with Firebase & Supabase  
+- 🔐 Secure authentication with Firebase
 - 🎨 Elegant and intuitive UI/UX  
 - 📩 Real-time messaging and notifications  
 - ☁️ Cloud storage integration  
@@ -13,10 +13,10 @@ PPLConnect is a modern Flutter-based application designed to enhance social conn
 ## 🛠️ Tech Stack
 
 - **Frontend:** Flutter (Dart)  
-- **Backend:** Firebase, Supabase  
+- **Backend:** Firebase,   
 - **State Management:** Provider  
 - **Authentication:** Firebase Auth  
-- **Database:** Firestore / Supabase  
+- **Database:** Firestore /   
 
 ## 📦 Installation
 
@@ -30,7 +30,7 @@ PPLConnect is a modern Flutter-based application designed to enhance social conn
 
 ## 🚀 Features
 
-- 🔐 Secure authentication with Firebase & Supabase  
+- 🔐 Secure authentication with Firebase & 
 - 🎨 Elegant and intuitive UI/UX  
 - 📩 Real-time messaging and notifications  
 - ☁️ Cloud storage integration  
@@ -39,10 +39,10 @@ PPLConnect is a modern Flutter-based application designed to enhance social conn
 ## 🛠️ Tech Stack
 
 - **Frontend:** Flutter (Dart)  
-- **Backend:** Firebase, Supabase  
+- **Backend:** Firebase 
 - **State Management:** Provider  
 - **Authentication:** Firebase Auth  
-- **Database:** Firestore / Supabase  
+- **Database:** Firestore
 
 ## 📦 Installation
 
